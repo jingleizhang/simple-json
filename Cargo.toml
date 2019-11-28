@@ -1,5 +1,5 @@
 [package]
-name = "simple_json"
+name = "simple-json"
 version = "0.1.0"
 authors = ["Bryan Chen <xlchen1291@gmail.com>"]
 edition = "2018"
