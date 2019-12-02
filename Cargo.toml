@@ -5,7 +5,7 @@ authors = ["Bryan Chen <xlchen1291@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-paste = "0.1"
+paste = "0.1.1"
 
 [features]
 default = ["std"]

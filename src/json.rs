@@ -2,7 +2,7 @@
 extern crate alloc;
 
 #[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
+use alloc::{string::String as AllocString, vec::Vec};
 
 use crate::parser::{
     Concat, Concat3, Either, Error, Input, OneOf, OneOrMore, Parser, ResultOf, ZeroOrMore,
@@ -220,6 +220,50 @@ pub enum JsonValue {
     Number(NumberValue),
     Boolean(bool),
     Null,
+}
+
+impl JsonValue {
+    pub fn get_object(&self) -> &JsonObject {
+        if let JsonValue::Object(obj) = self {
+            return obj;
+        }
+        panic!("JsonValue not a type of JsonValue::Object");
+    }
+
+    pub fn get_string(&self) -> AllocString {
+        if let JsonValue::String(val) = self {
+            return val.iter().collect::<AllocString>();
+        }
+        panic!("JsonValue not a type of JsonValue::String");
+    }
+
+    pub fn get_vec_char(&self) -> &Vec<char> {
+        if let JsonValue::String(array) = self {
+            return array;
+        }
+        panic!("JsonValue not a type of JsonValue::String(Vec<char>)");
+    }
+
+    pub fn get_num(&self) -> &NumberValue {
+        if let JsonValue::Number(num) = self {
+            return num;
+        }
+        panic!("JsonValue not a type of JsonValue::NumberValue");
+    }
+
+    pub fn get_bool(&self) -> &bool {
+        if let JsonValue::Boolean(b) = self {
+            return b;
+        }
+        panic!("JsonValue not a type of JsonValue::Boolean");
+    }
+
+    pub fn get_array(&self) -> &Vec<JsonValue> {
+        if let JsonValue::Array(array) = self {
+            return array;
+        }
+        panic!("JsonValue not a type of Array(Vec<JsonValue>)");
+    }
 }
 
 impl<I: Input> Parser<I> for Value
