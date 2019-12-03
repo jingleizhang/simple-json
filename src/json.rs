@@ -9,7 +9,7 @@ use crate::parser::{
     ZeroOrOne,
 };
 use crate::{literals, parsers};
-use core::convert::TryInto;
+use core::{ convert::TryInto, fmt::Debug };
 
 literals! {
     pub WhitespaceChar => '\u{0020}' | '\u{000D}' | '\u{000A}' | '\u{0009}';
@@ -194,8 +194,7 @@ impl<I: Input> Parser<I> for Element {
 
 pub struct Value;
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct NumberValue {
     pub integer: i64,
     pub fraction: u64,
@@ -203,7 +202,6 @@ pub struct NumberValue {
     pub exponent: i32,
 }
 
-#[cfg(feature = "std")]
 impl Into<f64> for NumberValue {
     fn into(self) -> f64 {
         (self.integer as f64 + self.fraction as f64 / 10f64.powi(self.fraction_length as i32))
@@ -211,8 +209,7 @@ impl Into<f64> for NumberValue {
     }
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum JsonValue {
     Object(JsonObject),
     Array(Vec<JsonValue>),
