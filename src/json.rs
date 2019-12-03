@@ -1,7 +1,4 @@
-#[cfg(not(feature = "std"))]
 extern crate alloc;
-
-#[cfg(not(feature = "std"))]
 use alloc::{string::String as AllocString, vec::Vec};
 
 use crate::parser::{

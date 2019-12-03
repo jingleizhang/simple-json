@@ -1,10 +1,8 @@
 use crate::parser::{Error, Position};
 
-#[cfg(not(feature = "std"))]
 extern crate alloc;
 
 use crate::parser::alloc::fmt::Formatter;
-#[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 use core::fmt::Debug;
 
@@ -18,7 +16,7 @@ pub struct SimplePosition {
 impl SimplePosition {
     pub fn next(&self, c: char) -> Self {
         let new_line = c == '\n';
-        Self {
+        Self { 
             index: self.index + 1,
             line: if new_line { self.line + 1 } else { self.line },
             column: if new_line { 0 } else { self.column + 1 },
@@ -55,12 +53,6 @@ impl core::ops::Sub<Self> for SimplePosition {
 #[derive(Debug, PartialEq, Eq)]
 pub struct SimpleError {
     pub reasons: Vec<(SimplePosition, &'static str)>,
-}
-
-impl core::fmt::Debug for SimpleError {
-    fn fmt(&self, _f: &mut Formatter<'_>) -> core::fmt::Result {
-        Ok(())
-    }
 }
 
 impl Error for SimpleError {
