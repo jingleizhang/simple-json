@@ -52,12 +52,11 @@ impl core::ops::Sub<Self> for SimplePosition {
     }
 }
 
-#[cfg_attr(feature = "std", derive(Debug, PartialEq, Eq))]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SimpleError {
     pub reasons: Vec<(SimplePosition, &'static str)>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
 impl core::fmt::Debug for SimpleError {
     fn fmt(&self, _f: &mut Formatter<'_>) -> core::fmt::Result {
         Ok(())
