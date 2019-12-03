@@ -9,7 +9,7 @@ use crate::parser::{
     ZeroOrOne,
 };
 use crate::{literals, parsers};
-use core::{ convert::TryInto, fmt::Debug };
+use core::{convert::TryInto, fmt::Debug};
 
 literals! {
     pub WhitespaceChar => '\u{0020}' | '\u{000D}' | '\u{000A}' | '\u{0009}';
@@ -202,6 +202,7 @@ pub struct NumberValue {
     pub exponent: i32,
 }
 
+#[cfg(feature = "std")]
 impl Into<f64> for NumberValue {
     fn into(self) -> f64 {
         (self.integer as f64 + self.fraction as f64 / 10f64.powi(self.fraction_length as i32))
