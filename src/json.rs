@@ -1,12 +1,12 @@
 extern crate alloc;
-use alloc::{string::String as AllocString, vec::Vec};
-
 use crate::parser::{
     Concat, Concat3, Either, Error, Input, OneOf, OneOrMore, Parser, ResultOf, ZeroOrMore,
     ZeroOrOne,
 };
 use crate::{literals, parsers};
+use alloc::{string::String as AllocString, vec::Vec};
 use core::{convert::TryInto, fmt::Debug};
+use num_traits::float::FloatCore;
 
 literals! {
     pub WhitespaceChar => '\u{0020}' | '\u{000D}' | '\u{000A}' | '\u{0009}';
@@ -199,7 +199,7 @@ pub struct NumberValue {
     pub exponent: i32,
 }
 
-#[cfg(feature = "std")]
+//#[cfg(feature = "std")]
 impl Into<f64> for NumberValue {
     fn into(self) -> f64 {
         (self.integer as f64 + self.fraction as f64 / 10f64.powi(self.fraction_length as i32))
@@ -259,6 +259,13 @@ impl JsonValue {
         }
         panic!("JsonValue not a type of Array(Vec<JsonValue>)");
     }
+
+    pub fn get_number_f64(&self) -> f64 {
+        if let JsonValue::Number(val) = self {
+            return (val.clone()).into();
+        }
+        panic!("JsonValue not a type of JsonValue::Number");
+    }
 }
 
 impl<I: Input> Parser<I> for Value
@@ -296,7 +303,7 @@ where
 
 pub struct Object;
 
-type JsonObject = Vec<(Vec<char>, JsonValue)>;
+pub type JsonObject = Vec<(Vec<char>, JsonValue)>;
 
 impl<I: Input> Parser<I> for Object {
     type Output = JsonObject;

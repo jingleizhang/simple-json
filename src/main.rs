@@ -6,17 +6,17 @@ use alloc::{string::String as AllocString, vec::Vec};
 
 use simple_json::{self, json::JsonValue};
 
-struct HTLC {
-    address: Vec<u8>,
-    topics: Vec<Vec<u8>>,
-    data: Vec<u8>,
-    block_number: Vec<u8>,
-    time_stamp: Vec<u8>,
-    transaction_hash: Vec<u8>,
-    transaction_index: Vec<u8>,
-}
-
+/*
 fn main() {
+    struct HTLC {
+        address: Vec<u8>,
+        topics: Vec<Vec<u8>>,
+        data: Vec<u8>,
+        block_number: Vec<u8>,
+        time_stamp: Vec<u8>,
+        transaction_hash: Vec<u8>,
+        transaction_index: Vec<u8>,
+    }
     let json_str = r#"{"status":"1","message":"OK","result":[{"address":"0x16d5195fe8c6ba98b2f61a9a787bc0bde19e3f6f","topics":["0x924028c31cbef81354a146f585e1c91ea6a9caa2a9880e0e2f195cb8894823aa","0x000000000000000000000000f7fea1722f9b27b0666919a5664bab486a4b18d3","0xc731f90c0df8fd2a27268bb7942ea7a53e0861ddd57227869645e5157f685913","0x952dc77591ca272bcb010e6acce188a078be41ca4598987ef122e28c2ae9d707"],"data":"0x000000000000000000000000cf5becb7245e2e6ee2e092f0bd63f6bd79ef19fe6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005dca9f440000000000000000000000000000000000000000000000000000000000674f9800000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000989680","blockNumber":"0x672888","timeStamp":"0x5dcaa1cb","gasPrice":"0x3b9aca00","gasUsed":"0x43bac","logIndex":"0x7","transactionHash":"0x196ee30fa9076bcb4b1e04a37df215ef754c27db7cdca926395116a2971ab1cf","transactionIndex":"0x39"},{"address":"0x16d5195fe8c6ba98b2f61a9a787bc0bde19e3f6f","topics":["0x924028c31cbef81354a146f585e1c91ea6a9caa2a9880e0e2f195cb8894823aa","0x000000000000000000000000603a2abcbb0414a5c13a8bb22c20daf2f9388ad8","0xef85676f7752cb4d76942df4fff5c46a4e57dec88aa96766ddafe084cbe59421","0xbf19265f61734f9e5483b03aa5b97693dee83c88858a2cda0de6fd55b01624fc"],"data":"0x000000000000000000000000cf5becb7245e2e6ee2e092f0bd63f6bd79ef19fe6c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005dd7c7610000000000000000000000000000000000000000000000000000000000684a1e00000000000000000000000000000000000000000000000000000000009896800000000000000000000000000000000000000000000000000000000000989680","blockNumber":"0x68230e","timeStamp":"0x5dd7c789","gasPrice":"0x1a13b8600","gasUsed":"0x40114","logIndex":"0x16","transactionHash":"0x42fb1b4b113a0fb9d0b2c8ce6cb888ff37bb70db4b789e300b5ed424413ad589","transactionIndex":"0x1c"}]}"#;
 
     let json_val: JsonValue = simple_json::parse_json(&json_str).unwrap();
@@ -134,3 +134,47 @@ fn main() {
 
     println!("htlcs len {}", htlcs.len());
 }
+*/
+
+fn main() {
+    let json_str = r#"{"data":{"id":"bitcoin","rank":"1","symbol":"BTC","name":"Bitcoin","supply":"18134287.0000000000000000","maxSupply":"21000000.0000000000000000","marketCapUsd":"131299748689.8711721818461171","volumeUsd24Hr":"3289762241.9455566768483118","priceUsd":"7240.4141772914023133","changePercent24Hr":"-0.1429944571894846","vwap24Hr":"7247.6143248016475241"},"timestamp":1577869002663}"#;
+
+    let json_val: JsonValue = simple_json::parse_json(&json_str).unwrap();
+    let key_id = "id";
+    let key_bitcoin = "bitcoin";
+    let key_price_usd = "priceUsd";
+
+    let mut id = AllocString::from("");
+    let mut price_usd = AllocString::from("");
+
+    let data = json_val.get_object()[0].1.get_object();
+
+    data.iter()
+        .filter(|(k, _)| {
+            key_id == k.iter().collect::<AllocString>()
+                || key_price_usd == k.iter().collect::<AllocString>()
+        })
+        .for_each(|(k, v)| {
+            let key = k.iter().collect::<AllocString>();
+            if key == key_id {
+                id = v.get_string();
+            } else if key == key_price_usd {
+                price_usd = v.get_string();
+            }
+        });
+
+    if id == key_bitcoin {
+        println!("id {:?}, price_usd {:?}", id, price_usd);
+    }
+}
+
+/*
+fn main() {
+    let json_str = r#"{"USD":7208.7}"#;
+
+    let json_val: JsonValue = simple_json::parse_json(&json_str).unwrap();
+
+    let val_f64: f64 = json_val.get_object()[0].1.get_number_f64();
+    println!("val_f64 {:?}", val_f64);
+}
+*/
