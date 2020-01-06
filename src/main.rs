@@ -4,7 +4,7 @@ extern crate alloc;
 #[cfg(not(feature = "std"))]
 use alloc::{string::String as AllocString, vec::Vec};
 
-use simple_json::{self, json::JsonValue};
+use simple_json::{self, json::JsonObject, json::JsonValue};
 
 /*
 fn main() {
@@ -136,6 +136,7 @@ fn main() {
 }
 */
 
+/*
 fn main() {
     let json_str = r#"{"data":{"id":"bitcoin","rank":"1","symbol":"BTC","name":"Bitcoin","supply":"18134287.0000000000000000","maxSupply":"21000000.0000000000000000","marketCapUsd":"131299748689.8711721818461171","volumeUsd24Hr":"3289762241.9455566768483118","priceUsd":"7240.4141772914023133","changePercent24Hr":"-0.1429944571894846","vwap24Hr":"7247.6143248016475241"},"timestamp":1577869002663}"#;
 
@@ -167,6 +168,7 @@ fn main() {
         println!("id {:?}, price_usd {:?}", id, price_usd);
     }
 }
+*/
 
 /*
 fn main() {
@@ -178,3 +180,91 @@ fn main() {
     println!("val_f64 {:?}", val_f64);
 }
 */
+
+fn main() {
+    let json_str = r#"{"status":{"timestamp":"2020-01-02T06:42:50.600Z","error_code":0,"error_message":null,"elapsed":7,"credit_count":1,"notice":null},"data":{"2275":{"id":2275,"name":"ProChain","symbol":"PRA","slug":"prochain","num_market_pairs":5,"date_added":"2017-12-13T00:00:00.000Z","tags":[],"max_supply":null,"circulating_supply":49562749.45,"total_supply":100000000,"platform":{"id":1027,"name":"Ethereum","symbol":"ETH","slug":"ethereum","token_address":"0x9041fe5b3fdea0f5e4afdc17e75180738d877a01"},"cmc_rank":493,"last_updated":"2020-01-02T06:42:06.000Z","quote":{"USD":{"price":0.0709146544966,"volume_24h":576640.229147533,"percent_change_1h":-0.945668,"percent_change_24h":-5.63962,"percent_change_7d":-0.429565,"market_cap":3514725.253148302,"last_updated":"2020-01-02T06:42:06.000Z"}}}}}"#;
+
+    let json_val = simple_json::parse_json(&json_str);
+    if let Err(e) = json_val {
+        println!("Err {:?}", e);
+        return;
+    }
+
+    let json_val: JsonValue = json_val.unwrap();
+    let key_error_code = "error_code";
+    let key_symbol = "symbol";
+    let key_quote = "quote";
+    let key_price = "price";
+
+    let mut error_code: i64 = -1;
+
+    if json_val.get_object().len() == 2 {
+        let status: &JsonObject = json_val.get_object()[0].1.get_object();
+
+        status
+            .iter()
+            .filter(|(k, _)| key_error_code == k.iter().collect::<AllocString>())
+            .for_each(|(k, v)| {
+                let key = k.iter().collect::<AllocString>();
+                if key == key_error_code {
+                    if let JsonValue::Number(obj) = v {
+                        error_code = obj.integer;
+                        if error_code != 0 {
+                            println!("Err error_code {}", error_code);
+                            return;
+                        }
+                    }
+                }
+            });
+
+        let data: &JsonObject = json_val.get_object()[1].1.get_object()[0].1.get_object();
+
+        let mut usd_obj: &JsonObject = status;
+        let mut found_usd_obj = false;
+        let mut price_f64: f64 = 0.0;
+
+        data.iter()
+            .filter(|(k, _)| {
+                key_symbol == k.iter().collect::<AllocString>()
+                    || key_quote == k.iter().collect::<AllocString>()
+            })
+            .for_each(|(k, v)| {
+                let key = k.iter().collect::<AllocString>();
+                if key == key_symbol {
+                    let value = v.get_string();
+                    if value != "PRA" {
+                        println!("Err value {}", value);
+                        return;
+                    }
+                } else if key == key_quote {
+                    let usd = v.get_object()[0].0.clone();
+                    if usd != vec!['U', 'S', 'D'] {
+                        println!("Err usd {:?}", usd);
+                        return;
+                    }
+
+                    usd_obj = v.get_object()[0].1.get_object();
+                    found_usd_obj = true;
+                }
+            });
+
+        if !found_usd_obj {
+            println!("Err not_found_usd_obj");
+            return;
+        }
+
+        usd_obj
+            .iter()
+            .filter(|(k, _)| key_price == k.iter().collect::<AllocString>())
+            .for_each(|(k, v)| {
+                let key = k.iter().collect::<AllocString>();
+                if key == key_price {
+                    price_f64 = v.get_number_f64();
+                }
+            });
+
+        println!("price_f64: {:?}", price_f64);
+    } else {
+        println!("Err not valid json len() {:?}", json_val.get_object().len());
+    }
+}

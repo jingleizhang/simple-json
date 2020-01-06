@@ -20,7 +20,9 @@ mod tests {
     #[test]
     fn it_works() {
         assert_eq!(
-            parse_json(&r#"{ "test": 1, "test2": [1e-4, 2.041e2, true, false, null, "\"1\n\""] }"#),
+            parse_json(
+                &r#"{ "test": 1, "test2": [1e-4, 2.041e2, true, false, null, "\"1\n\""], "test3": [] }"#
+            ),
             Ok(JsonValue::Object(vec![
                 (
                     vec!['t', 'e', 's', 't'],
@@ -51,7 +53,8 @@ mod tests {
                         JsonValue::Null,
                         JsonValue::String(vec!['\"', '1', 'n', '\"'])
                     ])
-                )
+                ),
+                (vec!['t', 'e', 's', 't', '3'], JsonValue::Null)
             ]))
         )
     }

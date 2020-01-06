@@ -199,7 +199,6 @@ pub struct NumberValue {
     pub exponent: i32,
 }
 
-//#[cfg(feature = "std")]
 impl Into<f64> for NumberValue {
     fn into(self) -> f64 {
         (self.integer as f64 + self.fraction as f64 / 10f64.powi(self.fraction_length as i32))
@@ -264,7 +263,7 @@ impl JsonValue {
         if let JsonValue::Number(val) = self {
             return (val.clone()).into();
         }
-        panic!("JsonValue not a type of JsonValue::Number");
+        panic!("JsonValue not f64 type of JsonValue::Number");
     }
 }
 
@@ -274,6 +273,10 @@ where
 {
     type Output = JsonValue;
     fn parse(input: &I, current: I::Position) -> ResultOf<I, Self::Output> {
+        let (value, next) = input.next_range(current, 2)?;
+        if value == "[]" {
+            return Ok((JsonValue::Null, next));
+        }
         if let Ok((output, next)) = <Object as Parser<I>>::parse(input, current) {
             return Ok((JsonValue::Object(output), next));
         }
