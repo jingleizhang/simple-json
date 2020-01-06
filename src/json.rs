@@ -1,10 +1,15 @@
+#[cfg(not(feature = "std"))]
 extern crate alloc;
+
 use crate::parser::{
     Concat, Concat3, Either, Error, Input, OneOf, OneOrMore, Parser, ResultOf, ZeroOrMore,
     ZeroOrOne,
 };
 use crate::{literals, parsers};
+
+#[cfg(not(feature = "std"))]
 use alloc::{string::String as AllocString, vec::Vec};
+
 use core::{convert::TryInto, fmt::Debug};
 use num_traits::float::FloatCore;
 

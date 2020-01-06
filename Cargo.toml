@@ -5,7 +5,7 @@ authors = ["Bryan Chen <xlchen1291@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-paste = "0.1.7"
+paste = "0.1.6"
 num-traits = { version = "0.2", default-features = false }
 
 [features]
