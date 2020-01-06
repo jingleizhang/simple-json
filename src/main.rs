@@ -185,8 +185,8 @@ fn main() {
     let json_str = r#"{"status":{"timestamp":"2020-01-02T06:42:50.600Z","error_code":0,"error_message":null,"elapsed":7,"credit_count":1,"notice":null},"data":{"2275":{"id":2275,"name":"ProChain","symbol":"PRA","slug":"prochain","num_market_pairs":5,"date_added":"2017-12-13T00:00:00.000Z","tags":[],"max_supply":null,"circulating_supply":49562749.45,"total_supply":100000000,"platform":{"id":1027,"name":"Ethereum","symbol":"ETH","slug":"ethereum","token_address":"0x9041fe5b3fdea0f5e4afdc17e75180738d877a01"},"cmc_rank":493,"last_updated":"2020-01-02T06:42:06.000Z","quote":{"USD":{"price":0.0709146544966,"volume_24h":576640.229147533,"percent_change_1h":-0.945668,"percent_change_24h":-5.63962,"percent_change_7d":-0.429565,"market_cap":3514725.253148302,"last_updated":"2020-01-02T06:42:06.000Z"}}}}}"#;
 
     let json_val = simple_json::parse_json(&json_str);
-    if let Err(e) = json_val {
-        println!("Err {:?}", e);
+    if let Err(_) = json_val {
+        println!("Err parse");
         return;
     }
 

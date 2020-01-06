@@ -196,7 +196,8 @@ impl<I: Input> Parser<I> for Element {
 
 pub struct Value;
 
-#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub struct NumberValue {
     pub integer: i64,
     pub fraction: u64,
@@ -211,7 +212,8 @@ impl Into<f64> for NumberValue {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, PartialEq)]
 pub enum JsonValue {
     Object(JsonObject),
     Array(Vec<JsonValue>),
