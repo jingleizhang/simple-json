@@ -1,15 +1,10 @@
-#[cfg(not(feature = "std"))]
 extern crate alloc;
-
 use crate::parser::{
     Concat, Concat3, Either, Error, Input, OneOf, OneOrMore, Parser, ResultOf, ZeroOrMore,
     ZeroOrOne,
 };
 use crate::{literals, parsers};
-
-#[cfg(not(feature = "std"))]
 use alloc::{string::String as AllocString, vec::Vec};
-
 use core::{convert::TryInto, fmt::Debug};
 use num_traits::float::FloatCore;
 
@@ -196,8 +191,7 @@ impl<I: Input> Parser<I> for Element {
 
 pub struct Value;
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct NumberValue {
     pub integer: i64,
     pub fraction: u64,
@@ -212,8 +206,7 @@ impl Into<f64> for NumberValue {
     }
 }
 
-#[cfg_attr(feature = "std", derive(Debug))]
-#[derive(Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum JsonValue {
     Object(JsonObject),
     Array(Vec<JsonValue>),
